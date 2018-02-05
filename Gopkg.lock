@@ -13,9 +13,15 @@
   packages = ["."]
   revision = "88b7b944be8bc8d8ec6195fca97c5869ba20f99d"
 
+[[projects]]
+  branch = "master"
+  name = "github.com/yargevad/filepathx"
+  packages = ["."]
+  revision = "907099cb5a626c26c0b04e01adca2798e63d030e"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "58c47b0d8af82aeb23ad6b33e6f5a7825a23c872e6cdbf62020876d2762b4391"
+  inputs-digest = "53b7589f4c70c4184c55ed6dd8c9800eca7645dc713e740762e487a911fde241"
   solver-name = "gps-cdcl"
   solver-version = 1

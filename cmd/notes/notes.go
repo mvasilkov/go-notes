@@ -1,6 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+
+	filepathx "github.com/yargevad/filepathx"
 	runewidth "github.com/mattn/go-runewidth"
 	tty "github.com/nsf/termbox-go"
 )
@@ -49,15 +54,29 @@ func (input *Input) Paint(x int, y int) {
 
 var input Input
 
-func paint() {
+func paint(files []string) {
 	tty.Clear(tty.ColorDefault, tty.ColorDefault)
 	defer tty.Flush()
 
 	input.Paint(0, 0)
+
+	for i, name := range files {
+		print(0, i+1, name)
+	}
 }
 
 func main() {
-	err := tty.Init()
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: notes <dir>")
+		return
+	}
+
+	files, err := filepathx.Glob(filepath.Join(os.Args[1], "**"))
+	if err != nil {
+		panic(err)
+	}
+
+	err = tty.Init()
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +84,7 @@ func main() {
 
 	tty.SetInputMode(tty.InputEsc)
 
-	paint()
+	paint(files)
 
 mainloop:
 	for {
@@ -88,6 +107,6 @@ mainloop:
 			panic(event.Err)
 		}
 
-		paint()
+		paint(files)
 	}
 }
