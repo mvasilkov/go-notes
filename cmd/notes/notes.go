@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -25,6 +26,29 @@ func Map(a []string, cb func(string) string) []string {
 		b[i] = cb(str)
 	}
 	return b
+}
+
+// Filter function
+func Filter(a []string, cb func(string) bool) (results []string) {
+	for _, b := range a {
+		if cb(b) {
+			results = append(results, b)
+		}
+	}
+	return
+}
+
+// OpenInVim function
+func OpenInVim(dir string, file string) {
+	cmd := exec.Command("nvim", filepath.Join(dir, file))
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func printString(x int, y int, str string) int {
@@ -116,18 +140,13 @@ func isMatching(a string) bool {
 	return true
 }
 
-// FilterNotes function
-func FilterNotes(notes []string) []string {
-	var results []string
-	for _, name := range notes {
-		if isMatching(name) {
-			results = append(results, name)
-		}
-	}
-	return results
-}
-
 func main() {
+	_, err := exec.LookPath("nvim")
+	if err != nil {
+		fmt.Println("This program requires neovim (nvim)")
+		return
+	}
+
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: notes DIR")
 		return
@@ -143,13 +162,13 @@ func main() {
 
 	inputAppend := func(c rune) {
 		input.Append(c)
-		filtered = FilterNotes(notes)
+		filtered = Filter(notes, isMatching)
 		selection = 0
 	}
 
 	inputPop := func() (c rune) {
 		c = input.Pop()
-		filtered = FilterNotes(notes)
+		filtered = Filter(notes, isMatching)
 		selection = 0
 		return
 	}
@@ -194,6 +213,9 @@ mainloop:
 				if selection > height-2 {
 					selection = height - 2
 				}
+
+			case tty.KeyEnter:
+				OpenInVim(dir, filtered[selection])
 
 			case tty.KeyBackspace, tty.KeyBackspace2:
 				inputPop()
