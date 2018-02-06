@@ -31,4 +31,12 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/mattn/go-runewidth"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/nsf/termbox-go"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/yargevad/filepathx"

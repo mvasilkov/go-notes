@@ -2,10 +2,10 @@
 
 
 [[projects]]
+  branch = "master"
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
-  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
-  version = "v0.0.2"
+  revision = "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d"
 
 [[projects]]
   branch = "master"
@@ -22,6 +22,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "53b7589f4c70c4184c55ed6dd8c9800eca7645dc713e740762e487a911fde241"
+  inputs-digest = "828c676c7684cd90562eae14bc9768525c005cd9c894c4fd5f18b250b91e18c5"
   solver-name = "gps-cdcl"
   solver-version = 1
