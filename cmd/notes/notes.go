@@ -141,6 +141,25 @@ func main() {
 	notes := LoadNotes(dir)
 	filtered := notes
 
+	inputAppend := func(c rune) {
+		input.Append(c)
+		filtered = FilterNotes(notes)
+		selection = 0
+	}
+
+	inputPop := func() (c rune) {
+		c = input.Pop()
+		filtered = FilterNotes(notes)
+		selection = 0
+		return
+	}
+
+	inputClear := func() {
+		input.text = nil
+		filtered = notes
+		selection = 0
+	}
+
 	err = tty.Init()
 	if err != nil {
 		panic(err)
@@ -158,7 +177,7 @@ mainloop:
 		switch event := tty.PollEvent(); event.Type {
 		case tty.EventKey:
 			switch event.Key {
-			case tty.KeyEsc:
+			case tty.KeyCtrlQ:
 				break mainloop
 
 			case tty.KeyArrowUp:
@@ -177,15 +196,18 @@ mainloop:
 				}
 
 			case tty.KeyBackspace, tty.KeyBackspace2:
-				input.Pop()
-				filtered = FilterNotes(notes)
-				selection = 0
+				inputPop()
+
+			case tty.KeyEsc, tty.KeyCtrlW:
+				inputClear()
+
+			case tty.KeySpace:
+				event.Ch = ' '
+				fallthrough
 
 			default:
 				if event.Ch != 0 {
-					input.Append(event.Ch)
-					filtered = FilterNotes(notes)
-					selection = 0
+					inputAppend(event.Ch)
 				}
 			}
 
