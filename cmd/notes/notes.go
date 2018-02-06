@@ -38,19 +38,6 @@ func Filter(a []string, cb func(string) bool) (results []string) {
 	return
 }
 
-// OpenInVim function
-func OpenInVim(dir string, file string) {
-	cmd := exec.Command("nvim", filepath.Join(dir, file))
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	err := cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-}
-
 func printString(x int, y int, str string) int {
 	for _, c := range str {
 		tty.SetCell(x, y, c, tty.ColorDefault, tty.ColorDefault)
@@ -140,6 +127,23 @@ func isMatching(a string) bool {
 	return true
 }
 
+func openVim(dir string, file string) {
+	tty.Close()
+
+	cmd := exec.Command("nvim", filepath.Join(dir, file))
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		panic(err)
+	}
+
+	if err := tty.Init(); err != nil {
+		panic(err)
+	}
+}
+
 func main() {
 	_, err := exec.LookPath("nvim")
 	if err != nil {
@@ -215,13 +219,19 @@ mainloop:
 				}
 
 			case tty.KeyEnter:
-				OpenInVim(dir, filtered[selection])
+				if len(filtered) != 0 {
+					openVim(dir, filtered[selection])
+				}
 
 			case tty.KeyBackspace, tty.KeyBackspace2:
-				inputPop()
+				if len(input.text) != 0 {
+					inputPop()
+				}
 
 			case tty.KeyEsc, tty.KeyCtrlW:
-				inputClear()
+				if len(input.text) != 0 {
+					inputClear()
+				}
 
 			case tty.KeySpace:
 				event.Ch = ' '
