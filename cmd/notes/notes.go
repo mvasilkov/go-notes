@@ -106,7 +106,7 @@ func paint(notes []string, height int) {
 
 // LoadNotes function
 func LoadNotes(dir string) []string {
-	notes, err := filepathx.Glob(filepath.Join(dir, "**", "*.go"))
+	notes, err := filepathx.Glob(filepath.Join(dir, "**", "*.n"))
 	if err != nil {
 		panic(err)
 	}
