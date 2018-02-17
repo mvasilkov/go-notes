@@ -183,6 +183,12 @@ func main() {
 		selection = 0
 	}
 
+	reloadNotes := func() {
+		notes = LoadNotes(dir)
+		filtered = Filter(notes, isMatching)
+		selection = 0
+	}
+
 	err = tty.Init()
 	if err != nil {
 		panic(err)
@@ -221,6 +227,7 @@ mainloop:
 			case tty.KeyEnter:
 				if len(filtered) != 0 {
 					openVim(dir, filtered[selection])
+					reloadNotes()
 				}
 
 			case tty.KeyBackspace, tty.KeyBackspace2:
@@ -232,6 +239,9 @@ mainloop:
 				if len(input.text) != 0 {
 					inputClear()
 				}
+
+			case tty.KeyCtrlR:
+				reloadNotes()
 
 			case tty.KeySpace:
 				event.Ch = ' '
